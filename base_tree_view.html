@@ -1,0 +1,191 @@
+<html>
+<head >
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>DATABASE TREE VIEW</title>
+<!-- I found and adapted this css code from: https://stackoverflow.com/questions/38192074/family-tree-css -->
+<!-- There is also an example on codepen.io at: http://codepen.io/Pestov/pen/BLpgm -->
+<!-- I am not sure who the original creator is -->
+ 
+<style>
+	table tr *{padding: 3px 5px;}
+	* {
+		margin: 0;
+        padding: 0;
+		font-family:sans-serif,Arial;
+		font-size:10pt;
+	}
+	table{border-collapse: collapse;}
+    td,th{border: 1px solid black;}
+	td.bg_select,th.bg_select{color: white;}
+	.tree {
+		height: 100%;
+		overflow-x: auto;
+		white-space: nowrap;
+		min-width: 800px;
+		min-height:500px;
+	}
+	.tree ul {
+		width: max-content;
+		padding-top: 20px;
+		position: relative;
+		transition: all 0.5s;
+		-webkit-transition: all 0.5s;
+		-moz-transition: all 0.5s;
+	}
+	.tree li {
+		display: none;
+		float: left;
+		text-align: center;
+		list-style-type: none;
+		position: relative;
+		padding: 20px 5px 0 5px;
+		transition: all 0.5s;
+		-webkit-transition: all 0.5s;
+		-moz-transition: all 0.5s;
+	}
+	/*We will use ::before and ::after to draw the connectors*/
+	.tree li::before, .tree li::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 50%;
+		border-top: 1px solid #ccc;
+		width: 50%;
+		height: 20px;
+	}
+	.tree li::after {
+		right: auto;
+		left: 50%;
+		border-left: 1px solid #ccc;
+	}
+	/*We need to remove left-right connectors from elements without any siblings*/
+	.tree li:only-child::after, .tree li:only-child::before {display: none;}
+	/*Remove space from the top of single children*/
+	.tree li:only-child {padding-top: 0;}
+	/*Remove left connector from first child and right connector from last child*/
+	.tree li:first-child::before, .tree li:last-child::after {border: 0 none;}
+	/*Adding back the vertical connector to the last nodes*/
+	.tree li:last-child::before {
+		border-right: 1px solid #ccc;
+		border-radius: 0 5px 0 0;
+		-webkit-border-radius: 0 5px 0 0;
+		-moz-border-radius: 0 5px 0 0;
+	}
+	.tree li:first-child::after {
+		border-radius: 5px 0 0 0;
+		-webkit-border-radius: 5px 0 0 0;
+		-moz-border-radius: 5px 0 0 0;
+	}
+	/*Time to add downward connectors from parents*/
+	.tree ul ul::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 50%;
+		border-left: 1px solid #ccc;
+		width: 0;
+		height: 20px;
+	}
+	.tree li div {
+		border: 1px solid #ccc;
+		padding: 5px 10px;
+		text-decoration: none;
+		color: #666;
+		font-family: arial, verdana, tahoma;
+		font-size: 11px;
+		display: inline-block;
+		min-width: 80px;
+		min-height: 30px;
+		border-radius: 5px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		transition: all 0.5s;
+		-webkit-transition: all 0.5s;
+		-moz-transition: all 0.5s;
+	}
+    .tree li div.bg_select{color: rgb(255, 255, 255);}
+    .bg_select{background: #08642e;}
+	/*Time for some hover effects*/
+	/*We will apply the hover effect the the lineage of the element also*/
+	.tree li div:hover, .tree li div:hover + ul li div {
+		background: #6a09c4;
+		color: rgb(255, 255, 255);
+		border: 1px solid #818181;
+	}
+	/*Connector styles on hover*/
+	.tree li div:hover + ul li::after,
+	.tree li div:hover + ul li::before,
+	.tree li div:hover + ul::before,
+	.tree li div:hover + ul ul::before {border-color: #b6b6b6;}
+</style>
+ 
+</head>
+<body>
+
+<div class="tree" id="FamilyTreeDiv">
+	<ul>
+		LISTAS_SUBSTITUIR
+	</ul>
+</div>
+<script>
+	function un_nested(element){
+		var element_aux = element.querySelectorAll('li')
+		for (item of element_aux){
+			item.style.display = "none"
+		}
+	}
+	var elementos = document.querySelectorAll("div")
+	for (aux_item of elementos){
+		if (!(aux_item.classList.contains("tree"))){
+			aux_item.addEventListener("click", function() {
+				var element_aux = this.parentNode.querySelector('ul').childNodes
+				for (item of element_aux){
+					if (item.nodeName == 'LI'){
+						if (item.style.display == "initial"){
+							item.style.display = "none"
+							for (item_2 of item.querySelectorAll("li")){
+								item_2.style.display = "none"
+							}
+						}else{
+							item.style.display = "initial"
+						}
+					}
+				}
+			});
+            aux_item.addEventListener("contextmenu", function(e) {
+                e.preventDefault();
+                if (this.classList.contains('bg_select')){
+                    this.classList.remove('bg_select')
+                    for (let element of this.parentNode.querySelectorAll('div')){
+                        element.classList.remove('bg_select')
+                        aux_table = element.querySelector('table')
+                        if (aux_table){
+                            aux_table.style.color = 'black'
+                        }
+                    }
+                }else{
+                    var element_aux = document.querySelectorAll('div')
+                    for (let element of element_aux){
+                        element.classList.remove('bg_select')
+                        aux_table = element.querySelector('table')
+                        if (aux_table){
+                            aux_table.style.color = 'black'
+                        }
+                    }
+                    this.classList.add('bg_select')
+                    for (let element of this.parentNode.querySelectorAll('div')){
+                        element.classList.add('bg_select')
+                        aux_table = element.querySelector('table')
+                        if (aux_table){
+                            aux_table.style.color = 'white'
+                        }
+                    }
+                }
+			}, false);
+		}
+	}
+</script>
+</body>
+</html>
