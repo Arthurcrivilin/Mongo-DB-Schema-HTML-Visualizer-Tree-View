@@ -18,4 +18,6 @@ file.write(aux)
 file.close()
 
 aux = subprocess.Popen('py -m pip install pymongo',shell=True)
+
+
 aux.wait()
