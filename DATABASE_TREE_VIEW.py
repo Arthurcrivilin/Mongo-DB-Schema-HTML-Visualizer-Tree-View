@@ -9,6 +9,7 @@ ROOT_DIR = os.path.split(os.path.abspath(__file__))[0]
 Alib.VARIABLES_INIT()
 DB_CLIENT = Alib.CONNECT_DB()
 
+
 def fazer_str_porcentagem(superior,inferior):
     try:
         return f"""{Alib.format_numero(superior)}/{Alib.format_numero(inferior)} = {Alib.format_numero(superior*100/inferior)}%"""
